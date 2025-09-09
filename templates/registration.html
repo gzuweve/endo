@@ -1,0 +1,274 @@
+{% load static %}
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>регистрация</title>
+  <meta name="color-scheme" content="light dark">
+
+  <style>
+    :root{
+      --bg: #0b0f1a;
+      --bg-2:#0e1422;
+      --fg: #e9eefc;
+      --muted:#a6b0cf;
+      --accent:#6ea8fe;
+      --accent-2:#b18cff;
+      --danger:#ff6b6b;
+      --success:#3ad29f;
+      --card: rgba(255,255,255,0.07);
+      --border: rgba(255,255,255,0.12);
+      --shadow: 0 10px 30px rgba(0,0,0,0.35);
+      --radius: 16px;
+      --focus: 0 0 0 3px rgba(110,168,254,.35);
+    }
+    @media (prefers-color-scheme: light){
+      :root{
+        --bg:#f6f8ff;
+        --bg-2:#eef2ff;
+        --fg:#101321;
+        --muted:#4b556b;
+        --card: rgba(255,255,255,0.7);
+        --border: rgba(16,19,33,0.08);
+        --shadow: 0 10px 30px rgba(16,19,33,0.1);
+        --focus: 0 0 0 3px rgba(110,168,254,.45);
+      }
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font: 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+      color:var(--fg);
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(110,168,254,.35), transparent 60%),
+        radial-gradient(1200px 600px at 110% 110%, rgba(177,140,255,.35), transparent 60%),
+        linear-gradient(160deg, var(--bg), var(--bg-2) 60%, var(--bg));
+      min-height:100%;
+      display:grid;
+      place-items:center;
+      overflow:auto;
+    }
+
+    .wrap{
+      width: min(100%, 920px);
+      padding: 32px 20px 48px;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 28px;
+      align-items: stretch;
+    }
+    @media (max-width: 880px){
+      .wrap{grid-template-columns: 1fr; max-width: 560px}
+    }
+
+    .card{
+      position:relative;
+      background: var(--card);
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      isolation:isolate;
+    }
+    .card::before{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        linear-gradient(120deg, rgba(110,168,254,.2), transparent 35% 65%, rgba(177,140,255,.2));
+      pointer-events:none;
+      mix-blend-mode: overlay;
+    }
+
+    .side{display:flex; flex-direction:column; justify-content:center; padding:36px 32px; gap:18px}
+    .brand{display:flex; align-items:center; gap:12px; font-weight:700; letter-spacing:.3px}
+    .logo{width:36px; height:36px; border-radius:10px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); box-shadow: 0 6px 18px rgba(110,168,254,.5), inset 0 0 12px rgba(255,255,255,.25)}
+    h1{margin:8px 0 0; font-size: clamp(22px, 2.2vw, 28px)}
+    p.lead{margin:0; color:var(--muted)}
+
+    /* form */
+    form{display:flex; flex-direction:column; gap:16px; margin-top:6px}
+    .field{display:flex; flex-direction:column; gap:10px}
+    .control{
+      position:relative; display:flex; align-items:center;
+      border:1px solid var(--border); border-radius:12px; overflow:hidden;
+      background: rgba(255,255,255,.04);
+      transition: transform .06s ease, box-shadow .06s ease, border-color .2s ease, background .2s ease;
+    }
+    .control:focus-within{box-shadow: var(--focus); border-color: rgba(110,168,254,.55); background: rgba(255,255,255,.06)}
+    .control svg{width:20px; height:20px; flex:0 0 20px; opacity:.7; margin-left:12px}
+    .input{appearance:none; border:0; outline:0; background:transparent; width:100%; padding:14px 14px 14px 12px; color:var(--fg); font-size:16px}
+    input::placeholder{color:color-mix(in srgb, var(--muted) 70%, transparent)}
+    .toggle-pass{border:0; background:transparent; padding:10px; margin-right:6px; cursor:pointer; color:var(--muted)}
+    .hint{font-size:13px; color:var(--muted)}
+    .row{display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap}
+    a{color:var(--accent); text-decoration:none}
+    a:hover{text-decoration:underline}
+    .btn{
+      appearance:none; border:0; cursor:pointer;
+      padding:14px 16px; border-radius:12px; font-weight:700;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color:#fff; box-shadow: 0 10px 22px rgba(110,168,254,.35);
+      transition: transform .06s ease, filter .2s ease;
+    }
+    .btn:active{transform: translateY(1px)}
+    .btn.secondary{background: transparent; color: var(--fg); border:1px solid var(--border); box-shadow:none}
+    .btn.full{width:100%}
+
+    .errors, .message{
+      border-radius:12px; padding:12px 14px; font-size:14px;
+      border:1px solid var(--border); background: rgba(255,255,255,.04);
+    }
+    .errors{border-color: color-mix(in srgb, var(--danger) 45%, var(--border)); color: var(--danger)}
+    .message.success{border-color: color-mix(in srgb, var(--success) 45%, var(--border)); color: var(--success)}
+    .field .error-text{color:var(--danger); font-size:13px}
+
+    /* right visual */
+    .visual{position:relative; display:grid; place-items:center; padding:0; min-height: 520px}
+    .orb{
+      position:absolute; width: 380px; height: 380px; border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #ffffff55, transparent 40%),
+                  conic-gradient(from 210deg, var(--accent), var(--accent-2), var(--accent));
+      filter: blur(6px) saturate(140%);
+      animation: float 9s ease-in-out infinite alternate;
+      opacity:.85;
+    }
+    @keyframes float{from{ transform: translate(-8px, -10px) rotate(-6deg) } to{ transform: translate(12px, 10px) rotate(6deg) }}
+    .card--overlay{
+      width: 88%; max-width: 520px; aspect-ratio: 16/10;
+      background: linear-gradient(175deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+      border:1px solid var(--border); border-radius: 20px; backdrop-filter: blur(6px);
+      box-shadow: var(--shadow);
+      display:flex; flex-direction:column; justify-content:center; align-items:center; gap:8px; text-align:center; padding:24px;
+    }
+    .overlay-kpi{display:flex; gap:16px; margin-top:10px; flex-wrap:wrap; justify-content:center}
+    .chip{border:1px solid var(--border); border-radius: 999px; padding:8px 12px; font-size:13px; color:var(--muted); background: rgba(255,255,255,.04)}
+    .footer{margin-top:10px; font-size:14px; color:var(--muted); text-align:center}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <!-- LEFT: form -->
+    <section class="card side">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>регистрация • личный кабинет</div>
+      </div>
+      <h1>создаю аккаунт ✨</h1>
+      <p class="lead">заполните поля ниже, чтобы начать</p>
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+
+      {% if form and form.non_field_errors %}
+        <div class="errors">
+          {% for err in form.non_field_errors %}{{ err }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
+        </div>
+      {% endif %}
+
+      <form method="post" action="{% url 'register' %}" novalidate>
+        {% csrf_token %}
+
+        <!-- username -->
+        <div class="field">
+          <label for="id_username">логин</label>
+          <div class="control">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 12c2.76 0 5-2.46 5-5.5S14.76 1 12 1 7 3.46 7 6.5 9.24 12 12 12zm0 2c-4.42 0-8 2.91-8 6.5S7.58 27 12 27s8-2.91 8-6.5S16.42 14 12 14z" transform="translate(0 -2)" />
+            </svg>
+            <input class="input" id="id_username" name="username" type="text" autocomplete="username" placeholder="придумайте логин" required value="{{ request.POST.username }}">
+          </div>
+          <div class="hint">можно латиницу, цифры, подчёркивания</div>
+          {% for err in form.username.errors %}<div class="error-text">{{ err }}</div>{% endfor %}
+        </div>
+
+        <!-- email -->
+        <div class="field">
+          <label for="id_email">email</label>
+          <div class="control">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5L4 8V6l8 5 8-5v2z"/>
+            </svg>
+            <input class="input" id="id_email" name="email" type="email" autocomplete="email" placeholder="ваш email" required value="{{ request.POST.email }}">
+          </div>
+          {% for err in form.email.errors %}<div class="error-text">{{ err }}</div>{% endfor %}
+        </div>
+
+        <!-- password1 -->
+        <div class="field">
+          <label for="id_password1">пароль</label>
+          <div class="control">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M17 8V7a5 5 0 0 0-10 0v1H5v14h14V8h-2zm-8-1a3 3 0 0 1 6 0v1H9V7z"/>
+            </svg>
+            <input class="input" id="id_password1" name="password1" type="password" autocomplete="new-password" placeholder="придумайте пароль" required>
+            <button type="button" class="toggle-pass" data-target="id_password1" title="показать/скрыть пароль" aria-label="показать/скрыть пароль">👁</button>
+          </div>
+          <div class="hint">минимум 8 символов, смешивайте буквы и цифры</div>
+          {% for err in form.password1.errors %}<div class="error-text">{{ err }}</div>{% endfor %}
+        </div>
+
+        <!-- password2 -->
+        <div class="field">
+          <label for="id_password2">Повторите пароль</label>
+          <div class="control">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M17 8V7a5 5 0 0 0-10 0v1H5v14h14V8h-2zm-8-1a3 3 0 0 1 6 0v1H9V7z"/>
+            </svg>
+            <input class="input" id="id_password2" name="password2" type="password" autocomplete="new-password" placeholder="повторите пароль" required>
+            <button type="button" class="toggle-pass" data-target="id_password2" title="показать/скрыть пароль" aria-label="показать/скрыть пароль">👁</button>
+          </div>
+          {% for err in form.password2.errors %}<div class="error-text">{{ err }}</div>{% endfor %}
+        </div>
+
+        <div class="row" style="gap:10px">
+          <label class="checkbox" style="display:flex; align-items:center; gap:10px; color:var(--muted); font-size:14px; user-select:none">
+            <input type="checkbox" name="terms" value="1" {% if request.POST.terms %}checked{% endif %} style="width:18px; height:18px">
+            принимаю <a href="#" target="_blank">Условия использования</a>
+          </label>
+        </div>
+
+        <button class="btn full" type="submit">Зарегистрироваться</button>
+
+
+        <div class="footer">
+          Уже есть аккаунт?
+          <a href="{% url 'login' %}">Войти</a>
+        </div>
+      </form>
+    </section>
+
+    <!-- RIGHT: visuals -->
+
+  </div>
+
+  <script>
+    // переключение темы
+    function toggleTheme(){
+      const meta = document.querySelector('meta[name="color-scheme"]');
+      const current = meta?.content.includes('dark') ? 'dark' : 'light';
+      const to = current === 'dark' ? 'light' : 'dark';
+      meta.content = to;
+      document.documentElement.style.colorScheme = to;
+      document.documentElement.classList.toggle('force-light');
+    }
+
+    // показ/скрытие пароля
+    document.querySelectorAll('.toggle-pass').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const id = btn.getAttribute('data-target');
+        const input = document.getElementById(id);
+        if(!input) return;
+        if(input.type === 'password'){ input.type = 'text'; btn.textContent = '🙈'; }
+        else { input.type = 'password'; btn.textContent = '👁'; }
+        input.focus();
+      });
+    });
+  </script>
+</body>
+</html>
