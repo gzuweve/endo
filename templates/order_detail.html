@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Детали заказа</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .order-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .order-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .order-title {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .order-meta {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .meta-label {
+            font-weight: bold;
+            opacity: 0.9;
+        }
+
+        .meta-value {
+            font-size: 1.1em;
+        }
+
+        .deadline-overdue {
+            color: #ff6b6b;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .order-content {
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .order-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .info-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .document-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+        }
+
+        .section-title {
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 8px;
+        }
+
+        .info-details {
+            line-height: 1.8;
+        }
+
+        .info-item {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .document-preview {
+            width: 100%;
+            height: 500px;
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            margin-bottom: 15px;
+        }
+
+        .document-placeholder {
+            text-align: center;
+            color: #6c757d;
+        }
+
+        .document-placeholder i {
+            font-size: 3em;
+            margin-bottom: 10px;
+            color: #adb5bd;
+        }
+
+        .document-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .btn-work {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-work:hover {
+            background: #f39c12;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #1e7e34;
+            transform: translateY(-2px);
+        }
+        .btn-cancel {
+            background: #6b6d6d;
+            color: white;
+        }
+        .btn-cancel:hover {
+            background: #6d6b6bd6;
+            transform: translateY(-2px);
+        }
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .order-footer {
+            background: #e9ecef;
+            padding: 20px 30px;
+            text-align: center;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9em;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-completed {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-overdue {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="order-container">
+        <!-- Шапка заказа -->
+        <div class="order-header">
+            <h1 class="order-title">Заказ #{{ order.id }}</h1>
+            <div class="order-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Статус:</span>
+                    <span class="meta-value status-badge status-pending">{{ order.status }}</span>
+                </div>
+                {% if order.status == "Не выполнен" or order.status == "В работе" %}
+                    <div class="meta-item">
+                        <span class="meta-label">Дедлайн:</span>
+                        <span class="meta-value {% if order.is_overdue %}deadline-overdue{% endif %}">
+                            {{ order.deadline }}
+                        </span>
+
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Основной контент -->
+        <div class="order-content">
+            <!-- Информация о заказе -->
+            <div class="info-section">
+                <h2 class="section-title">📋 Информация о заказе</h2>
+                <div class="info-details">
+                    <div class="info-item">
+                        <span class="info-label">Товар:</span>
+                        <span class="info-value">{{ order.material.name }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Информация:</span>
+                        <span class="info-value">{{ order.material.information|default:"Отсутствует" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Чертёж:</span>
+                        <a href = "{{ order.material.drawing.url }}" class="info-value">Скачать</a>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+
+        <!-- Футер с действиями -->
+        <div class="order-footer">
+            <div class="document-actions">
+                <a href="{% url 'home' %}" class="btn btn-primary">
+                    ← Назад к списку
+                </a>
+                {% if order.status == "Не выполнен" %}
+                 <button class="btn btn-work" onclick="takeorder()">
+                     Взять в работу
+                </button>
+                {% endif %}
+                {% if order.status == "В работе" %}
+                <button class="btn btn-success" onclick="finishtheorder()">
+                    Завершить работу
+                </button>
+                 <button class="btn btn-cancel" onclick="canceltheorder()">
+                    Отменить работу
+                </button>
+                {% endif %}
+                {% if order.status == "Выполнен" %}
+                <button class="btn btn-danger" onclick="returnorder()">
+                    Вернуть в работу
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function printDocument() {
+            if ("{{ order.drawing }}") {
+                window.open("{{ order.drawing.url }}", '_blank').print();
+            } else {
+                alert('Чертеж не загружен');
+            }
+        }
+
+        function uploadDocument() {
+            alert('Функция загрузки документа будет реализована здесь');
+            // Реализация загрузки файла
+        }
+
+        function markAsCompleted() {
+            if (confirm('Отметить заказ как выполненный?')) {
+                // Логика отметки как выполненного
+                alert('Заказ отмечен как выполненный');
+            }
+        }
+
+        function editOrder() {
+            alert('Редактирование заказа');
+            // Переход на страницу редактирования
+        }
+
+        function deleteOrder() {
+            if (confirm('Вы уверены, что хотите удалить этот заказ?')) {
+                if (confirm('Это действие нельзя отменить! Подтвердите удаление.')) {
+                    // Логика удаления заказа
+                    alert('Заказ удален');
+                    window.location.href = "{% url 'home' %}";
+                }
+            }
+        }
+
+        // Авто-обновление статуса дедлайна
+        function updateDeadlineStatus() {
+            const deadlineElements = document.querySelectorAll('.deadline-overdue');
+            deadlineElements.forEach(element => {
+                element.innerHTML = '🚨 ПРОСРОЧЕНО';
+            });
+        }
+
+        // Запуск при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDeadlineStatus();
+        });
+        function takeorder() {
+            if (confirm("Вы уверены, что хотите взять этот заказ в работу?")) {
+                updateOrderStatus("В работе");
+            }
+        }
+        function finishtheorder() {
+            if (confirm("Вы уверены, что хотите завершить этот заказ?")) {
+                updateOrderStatus("Выполнен");
+            }
+        }
+
+        function canceltheorder() {
+            if (confirm("Вы уверены, что хотите отменить работу над этим заказом?")) {
+                updateOrderStatus("Не выполнен");
+            }
+        }
+
+        function returnorder() {
+            if (confirm("Вы уверены, что хотите вернуть этот заказ в работу?")) {
+                updateOrderStatus("В работе");
+            }
+        }
+
+        function updateOrderStatus(newStatus) {
+            // Получаем ID заказа из шаблона
+            const orderId = "{{ order.id }}";
+
+            // Отправляем PATCH запрос на сервер
+            fetch(`/order/${orderId}/update/status/`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken') // Функция для получения CSRF токена
+                },
+                body: JSON.stringify({
+                    status: newStatus
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Обновляем страницу после успешного изменения статуса
+                    window.location.reload();
+                } else {
+                    alert('Ошибка при обновлении статуса заказа');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Произошла ошибка при обновлении статуса');
+            });
+        }
+
+        // Функция для получения CSRF токена
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</body>
+</html>

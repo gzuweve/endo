@@ -1,11 +1,89 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-<a href="{% url 'logout' %}">
-выйти </a>
+<header class="header">
+    <div class="logo">Личный кабинет</div>
+    <div class="user-menu">
+        <div class="user-icon" id="userIcon">
+            <i class="fas fa-user"></i>
+        </div>
+        <div class="dropdown-menu" id="dropdownMenu">
+            <a href="{% url 'settings' %}"><i class="fas fa-cog"></i> Настройки</a>
+            <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Выйти</a>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+
+
+    <section class="orders-section pending-orders">
+        <h2 class="section-title">Невыполненные заказы</h2>
+        <ul class="order-list">
+            {% for order in pending_orders %}
+            <li class="order-item {% if order.outofdeadline %}order-overdue{% endif %}"
+                onclick="window.location.href='{% url 'order_detail' order.id %}'">
+                <div class="order-title">Заказ #{{ order.id }}</div>
+                <div class="order-details">
+                    Товар: {{ order.material.name}} |
+                    Срок сдачи товара: {{ order.deadline }}
+                </div>
+            </li>
+            {% empty %}
+            <li class="order-item">
+                <div class="order-details">Нет невыполненных заказов</div>
+            </li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <section class="orders-section in-progress-orders">
+        <h2 class="section-title">В работе</h2>
+        <ul class="order-list">
+            {% for order in in_progress_orders %}
+            <li class="order-item {% if order.outofdeadline %}order-overdue{% endif %}"
+                onclick="window.location.href='{% url 'order_detail' order.id %}'">
+                <div class="order-title">Заказ #{{ order.id }}</div>
+                <div class="order-details">
+                    Товар: {{ order.material.name}} |
+                    Срок сдачи товара: {{ order.deadline }}
+                </div>
+            </li>
+            {% empty %}
+            <li class="order-item">
+                <div class="order-details">Нет заказов в работе</div>
+            </li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <section class="orders-section completed-orders">
+        <h2 class="section-title">Выполненные заказы</h2>
+        <ul class="order-list">
+            {% for order in completed_orders %}
+            <li class="order-item" onclick="window.location.href='{% url 'order_detail' order.id %}'">
+                <div class="order-title">Заказ #{{ order.id }}</div>
+                <div class="order-details">
+                    Товар: {{ order.material.name}}
+                </div>
+            </li>
+            {% empty %}
+            <li class="order-item">
+                <div class="order-details">Нет выполненных заказов</div>
+            </li>
+            {% endfor %}
+        </ul>
+    </section>
+</div>
+
+<script src="{% static 'js/home.js' %}"></script>
 </body>
 </html>

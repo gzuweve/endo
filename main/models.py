@@ -11,16 +11,14 @@ class User(AbstractUser):
 class Material(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=999)
-    drawing =  models.FileField(upload_to="drawings/ ")
+    drawing =  models.FileField(upload_to="drawings/")
     information = models.CharField(max_length=999999)
 
     def __str__(self):
         return f"{self.name}"
 class Status (models.TextChoices):
-    NEW = "Новый"
     INWORK = "В работе"
     DONE = "Выполнен"
-    OUTOFDEALINE = "Просрочен"
     NOTDONE = "Не выполнен"
 
 
@@ -34,8 +32,8 @@ class Order(models.Model):
         Material,
         on_delete=models.CASCADE,  # что делать при удалении пользователя
     )
-    deadline = models.CharField(max_length=999999)
-    status = models.CharField(max_length=999999,choices=Status.choices, default=Status.NEW)
+    deadline = models.DateField()
+    status = models.CharField(max_length=999999,choices=Status.choices, default=Status.NOTDONE)
     class Meta:
         verbose_name = 'Заказ'
         verbose_name_plural = 'Заказы'
