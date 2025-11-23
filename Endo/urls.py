@@ -29,7 +29,6 @@ urlpatterns = [
     path("auth/", views.login_view, name="login"),
     path("login/forgotpassword", views.forgotpassword, name="password_reset"),
     path("", views.home, name = 'main'),
-    path("settings/", views.settings, name = "settings"),
     path("order_detail/<int:id>", views.order_detail, name = "order_detail" ),
     path('order/<int:id>/update/status/', views.update_status, name='update_order_status')
 ]

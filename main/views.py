@@ -118,8 +118,7 @@ def login_view(request):
 def forgotpassword(request):
     return render(request, "forgotpassword.html")
 
-def settings (request):
-    return render(request, "settings.html")
+
 
 
 @csrf_exempt

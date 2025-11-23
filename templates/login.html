@@ -195,15 +195,9 @@
             <input type="checkbox" name="remember" value="1" {% if request.POST.remember %}checked{% endif %}>
             Запомнить меня
           </label>
-          <a href="{% url 'password_reset' %}">Забыли пароль?</a>
         </div>
 
         <button class="btn full" type="submit">Войти</button>
-
-        <div class="footer">
-          Нет аккаунта?
-          <a href="{% url 'register' %}">Зарегистрироваться</a>
-        </div>
       </form>
     </section>
   </div>
