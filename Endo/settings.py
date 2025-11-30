@@ -127,7 +127,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 # STATICFILES_DIRS = [BASE_DIR / 'static']      # для разработки (если есть папка /static рядом с manage.py)
-STATIC_ROOT = '/var/www/u0381436/data/endo/static'
+# STATIC_ROOT = '/var/www/u0381436/data/endo/static'
+STATIC_ROOT = "static/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
