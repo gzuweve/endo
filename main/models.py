@@ -17,6 +17,8 @@ class Material(models.Model):
     name = models.CharField(max_length=999)
     drawing = models.FileField(upload_to="drawings/")
     information = models.CharField(max_length=999999)
+    articul = models.CharField(max_length=999999)
+
 
     class Meta:
         verbose_name = 'Материал'
